@@ -1,7 +1,7 @@
 import time
 import json
 from os import environ
-from flask import render_template, request
+from flask import render_template, request, abort
 
 
 class BaseController():
@@ -24,3 +24,6 @@ class BaseController():
             return request.args[key]
         else:
             return default
+
+    def error(self, code=404):
+        return abort(code)

@@ -1,5 +1,11 @@
+import os
 import pymysql
 from os import environ
+from dotenv import load_dotenv
+
+dotenv_path = os.path.normpath(__file__+'./../../../.env')
+print(dotenv_path)
+load_dotenv(dotenv_path)
 
 mysql_conn = pymysql.connect(
     host=environ.get('MYSQL_HOST'),

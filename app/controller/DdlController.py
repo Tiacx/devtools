@@ -22,25 +22,17 @@ class DdlController(BaseController):
         tables = imysql.list_tables(database)
         return self.asJson(tables)
 
-    def show(self, cla_type, database, table_name, title='DevTools!!', logo='logo'):
-        ajax = int(self.getValue('ajax', 0))
-
+    def get_obj(self, database, table_name):
         table_ddl = imysql.table(table_name, database).get_ddl()
         if table_ddl is False:
-            return 'Something Wrong!!'
+            return self.error(500)
         table_comment = imysql.table(table_name, database).get_comment()
         result = DdlParse().parse(table_ddl)
 
         obj = iObject(istring.ucwords(table_name))
         obj.set_comment(table_comment)
-        for col in result.columns.values():
-            obj.add_attr(col)
 
-        code = obj.to_string('java')
-        if ajax == 1:
-            return self.asJson(code)
-        else:
-            return self.render('code', code=code, title=title, logo='ddl2bean')
+        return (obj, result)
 
     def ddl2bean(self):
         title = 'Ddl2Bean!!'
@@ -48,8 +40,20 @@ class DdlController(BaseController):
 
         s = self.getValue('s')
         if s is not None:
+            ajax = int(self.getValue('ajax', 0))
             s = s.split('.')
-            return self.show('bean', s[0], s[1], title, logo)
+            tmp = self.get_obj(s[0], s[1])
+            obj = tmp[0]
+            result = tmp[1]
+
+            for col in result.columns.values():
+                obj.add_attr(col)
+
+            code = obj.to_string()
+            if ajax == 1:
+                return self.asJson(code)
+            else:
+                return self.render('code', code=code, title=title, logo=logo)
 
         uri = 'ddl2bean'
         return self.render('ddl2', title=title, logo=logo, uri=uri)
@@ -60,8 +64,20 @@ class DdlController(BaseController):
 
         s = self.getValue('s')
         if s is not None:
+            ajax = int(self.getValue('ajax', 0))
             s = s.split('.')
-            return self.show('model', s[0], s[1], title, logo)
+            tmp = self.get_obj(s[0], s[1])
+            obj = tmp[0]
+            result = tmp[1]
+
+            for col in result.columns.values():
+                obj.add_attr(col)
+
+            code = obj.to_string()
+            if ajax == 1:
+                return self.asJson(code)
+            else:
+                return self.render('code', code=code, title=title, logo=logo)
 
         uri = 'ddl2model'
         return self.render('ddl2', title=title, logo=logo, uri=uri)
@@ -72,8 +88,20 @@ class DdlController(BaseController):
 
         s = self.getValue('s')
         if s is not None:
+            ajax = int(self.getValue('ajax', 0))
             s = s.split('.')
-            return self.show('entity', s[0], s[1], title, logo)
+            tmp = self.get_obj(s[0], s[1])
+            obj = tmp[0]
+            result = tmp[1]
+
+            for col in result.columns.values():
+                obj.add_attr(col)
+
+            code = obj.to_string()
+            if ajax == 1:
+                return self.asJson(code)
+            else:
+                return self.render('code', code=code, title=title, logo=logo)
 
         uri = 'ddl2entity'
         return self.render('ddl2', title=title, logo=logo, uri=uri)
@@ -84,8 +112,20 @@ class DdlController(BaseController):
 
         s = self.getValue('s')
         if s is not None:
+            ajax = int(self.getValue('ajax', 0))
             s = s.split('.')
-            return self.show('info', s[0], s[1], title, logo)
+            tmp = self.get_obj(s[0], s[1])
+            obj = tmp[0]
+            result = tmp[1]
+
+            for col in result.columns.values():
+                obj.add_attr(col)
+
+            code = obj.to_string()
+            if ajax == 1:
+                return self.asJson(code)
+            else:
+                return self.render('code', code=code, title=title, logo=logo)
 
         uri = 'ddl2info'
         return self.render('ddl2', title=title, logo=logo, uri=uri)

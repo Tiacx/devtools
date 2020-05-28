@@ -1,13 +1,9 @@
-from operator import methodcaller
-
-
 class iObject():
     comment = ''
     space = ''
     name = ''
     attributes = {}
     methods = {}
-    stype = 'java'
 
     def __init__(self, name=None):
         if name is not None:
@@ -35,9 +31,6 @@ class iObject():
         self.attributes[attr.name] = attr
 
     def gen_data_type(self, data_type):
-        if self.stype != 'java':
-            return ' '
-
         maps = {
             'TINYINT': 'Byte',
             'SMALLINT': 'Short',
@@ -73,7 +66,7 @@ class iObject():
             return ''
 
         s = ''
-        if attr.comment != '':
+        if attr.comment is not None:
             s = '\t/** %s **/\n' % (attr.comment)
         access = getattr(attr, 'access', 'public')
         s += '\t%s%s%s;\n' % (access, self.gen_data_type(attr.data_type), attr.name)
@@ -85,7 +78,7 @@ class iObject():
     def get_method(self, method_name):
         pass
 
-    def to_java(self):
+    def to_string(self):
         self.stype = 'java'
 
         s = self.get_comment()
@@ -97,9 +90,3 @@ class iObject():
             s += '\n'
         s = s[0:-1] + '}\n'
         return s
-
-    def to_string(self, stype):
-        try:
-            return methodcaller('to_' + stype)(self)
-        except Exception:
-            return ''
