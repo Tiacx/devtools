@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block link %}
+<link rel="stylesheet" type="text/css" href="/static/css/select2.min.css">
+{% endblock %}
+
+{% block style %}
+<style type="text/css">
+    html,body{height: 100%;}
+    .panel-code{height: 82% !important;}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="logo text-center mt-2 mb-2">
+    <img src="/static/img/{{ logo }}.png" height="70" class="rounded" alt="{{ logo }}">
+</div>
+
+<hr class="my-4">
+
+<div class="container">
+    <form>
+        <div class="form-group">
+            <label for="">Environment</label>
+            <input type="text" class="form-control" readonly="readonly" value="test" id="environment">
+        </div>
+        <div class="form-group">
+            <label for="">Database name</label>
+            <select class="form-control" id="database"></select>
+        </div>
+        <div class="form-group">
+            <label for="">Table name</label>
+            <select class="form-control" id="table"></select>
+        </div>
+        <div class="form-group">
+            <label for="result">Result</label>
+            <textarea class="form-control" id="result" rows="10"></textarea>
+        </div>
+    </form>
+
+    <ul class="list-group links">
+        <li class="list-group-item active">Links</li>
+        <li class="list-group-item">Bean: <a href="#" id="ddl2bean">###</a></li>
+        <li class="list-group-item">Model: <a href="#" id="ddl2model">###</a></li>
+        <li class="list-group-item">Entity: <a href="#" id="ddl2entity">###</a></li>
+        <li class="list-group-item">Info: <a href="#" id="ddl2info">###</a></li>
+    </ul>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="/static/js/select2.min.js"></script>
+<script type="text/javascript">
+    $('#database, #table').select2();
+
+    var environment = $('#environment').val();
+    $.get('/ddl2database/', {s: environment}, function(res){
+        if (res.error == 0) {
+            $('#database').html('<option value="">Select...</option>');
+            $(res.data).each(function(i, item){
+                $('#database').append(`<option value="${item}">${item}</option>`);
+            });
+            $('#database').trigger('change');
+        }
+    }, 'json');
+
+    $('#database').on('change.select2', function(){
+        var database = $(this).val();
+        if (database != '') {
+            $.get('/ddl2table/', {s: database}, function(res){
+                if (res.error == 0) {
+                    $('#table').html('<option value="">Select...</option>');
+                    $(res.data).each(function(i, item){
+                        $('#table').append(`<option value="${item}">${item}</option>`);
+                    });
+                    $('#table').trigger('change');
+                }
+            }, 'json');
+        }
+    });
+
+    $('#table').on('change.select2', function(){
+        var database = $('#database').val();
+        var table = $(this).val();
+        if (table != '') {
+            $.get('{{ app_domain + uri }}/', {s: database + '.' + table, 'ajax': 1}, function(res){
+                if (res.error == 0) {
+                    $('#result').val(res.data);
+
+                    var link = `{{ app_domain }}###/?s=${database}.${table}`;
+                    $('#ddl2bean').attr('href', link.replace('###', 'ddl2bean')).html(link.replace('###', 'ddl2bean'));
+                    $('#ddl2model').attr('href', link.replace('###', 'ddl2model')).html(link.replace('###', 'ddl2model'));
+                    $('#ddl2entity').attr('href', link.replace('###', 'ddl2entity')).html(link.replace('###', 'ddl2entity'));
+                    $('#ddl2info').attr('href', link.replace('###', 'ddl2info')).html(link.replace('###', 'ddl2info'));
+                }
+            }, 'json');
+        }
+    });
+
+    // 链接
+    $('.links a').on('click', function() {
+        if ($(this).attr('id') != 'ddl2bean') {
+            alert('开发中，敬请期待!!');
+            return false;
+        }
+
+        var url = $(this).attr('href');
+        if(url && url != "#"){
+            var iWidth  = 1100; // 弹出窗口的宽度;
+            var iHeight = 700; // 弹出窗口的高度;
+            var iTop    = (window.screen.availHeight-30-iHeight)/2; // 获得窗口的垂直位置;
+            var iLeft   = (window.screen.availWidth-10-iWidth)/2; // 获得窗口的水平位置;
+
+            window.open(url,"","height="+iHeight+", width="+iWidth+", top="+iTop+", left="+iLeft);
+        }
+        return false;
+    });
+</script>
+{% endblock %}

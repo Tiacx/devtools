@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="logo text-center">
+    <img src="/static/img/logo.png" class="img-fluid rounded" alt="logo">
+</div>
+
+<hr class="my-4">
+
+<div class="d-flex justify-content-around mt-5">
+    <a href="/ddl2bean/">
+        <img src="/static/img/ddl2bean.png" width="200" class="img-fluid rounded" alt="ddl2bean">
+    </a>
+    <a href="/ddl2model/" onclick="alert('开发中，敬请期待!!');return false;">
+        <img src="/static/img/ddl2model.png" width="200" class="img-fluid rounded" alt="ddl2model">
+    </a>
+    <a href="/ddl2entity/" onclick="alert('开发中，敬请期待!!');return false;">
+        <img src="/static/img/ddl2entity.png" width="200" class="img-fluid rounded" alt="ddl2entity">
+    </a>
+    <a href="/ddl2info/" onclick="alert('开发中，敬请期待!!');return false;">
+        <img src="/static/img/ddl2info.png" width="200" class="img-fluid rounded" alt="ddl2info">
+    </a>
+</div>
+
+<div style="height: 100px"></div>
+
+{% endblock %}

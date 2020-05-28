@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block style %}
+<style type="text/css">
+    html,body{height: 100%; overflow: hidden;}
+    .panel-code{height: 75% !important;}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="logo text-center mt-2 mb-2">
+    <img src="/static/img/{{ logo }}.png" height="70" class="rounded" alt="{{ logo }}">
+</div>
+
+<textarea class="panel-code form-control">{{ code }}</textarea>
+{% endblock %}
