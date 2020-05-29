@@ -9,7 +9,7 @@
 <style type="text/css">
     html,body{height: 100%;}
     .panel-code{height: 82% !important;}
-    .btn-home{font-size: 28px; line-height: 70px;}
+    .btn-home{font-size: 30px; line-height: 70px; color: black}
 </style>
 {% endblock %}
 
@@ -18,7 +18,7 @@
 <div class="container d-flex justify-content-between mt-2 mb-2">
     <a href="/" class="btn-home"><i class="fa fa-home"></i></a>
     <img src="/static/img/{{ logo }}.png" height="70" class="rounded" alt="{{ logo }}">
-    <a href="#">&nbsp;</a>
+    <a href="javascript:;">&nbsp;</a>
 </div>
 
 <hr class="my-4">
@@ -38,7 +38,7 @@
             <select class="form-control" id="table"></select>
         </div>
         <div class="form-group">
-            <label for="result">Result</label>
+            <label for="result">Result&nbsp;&nbsp;<a href="javascript:;" class="btn-copy"><i class="fa fa-copy"></i></a></label>
             <textarea class="form-control" id="result" rows="10"></textarea>
         </div>
     </form>
@@ -103,13 +103,20 @@
         }
     });
 
+    // 复制
+    $('.btn-copy').on('click', function(){
+        var _this = $(this);
+        $('#result').trigger('select');
+        document.execCommand('copy');
+        _this.tooltip({title: 'Copied!!', trigger: 'focus', placement: 'right'});
+        _this.trigger('focus');
+        window.setTimeout(function(){
+            _this.tooltip('dispose');
+        }, 2000);
+    });
+
     // 链接
     $('.links a').on('click', function() {
-        if ($(this).attr('id') != 'ddl2bean') {
-            alert('开发中，敬请期待!!');
-            return false;
-        }
-
         var url = $(this).attr('href');
         if(url && url != "#"){
             var iWidth  = 1100; // 弹出窗口的宽度;

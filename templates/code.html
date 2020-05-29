@@ -5,15 +5,33 @@
 {% block style %}
 <style type="text/css">
     html,body{height: 100%; overflow: hidden;}
-    .panel-code{height: 75% !important;}
+    .btn-copy{margin: 35px 0 0 12px;}
+    .panel-code{width: 98%; height: 75% !important; margin: 0 auto}
 </style>
 {% endblock %}
 
 {% block content %}
 
-<div class="logo text-center mt-2 mb-2">
+<div class="d-flex justify-content-between mt-2 mb-2">
+    <a href="javascript:;" class="btn btn-sm btn-info btn-copy"><i class="fa fa-copy"></i> Copy</a>
     <img src="/static/img/{{ logo }}.png" height="70" class="rounded" alt="{{ logo }}">
+    <a href="javascript:;">&nbsp;</a>
 </div>
 
 <textarea class="panel-code form-control">{{ code }}</textarea>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $('.btn-copy').on('click', function(){
+        var _this = $(this);
+        $('.panel-code').trigger('select');
+        document.execCommand('copy');
+        _this.tooltip({title: 'Copied!!', trigger: 'focus', placement: 'right'});
+        _this.trigger('focus');
+        window.setTimeout(function(){
+            _this.tooltip('dispose');
+        }, 2000);
+    });
+</script>
 {% endblock %}
