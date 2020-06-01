@@ -95,7 +95,8 @@ class iObject():
 
     def gen_data_type(self, data_type):
         maps = {
-            'TINYINT': 'Byte',
+            # 'TINYINT': 'Byte',
+            'TINYINT': 'Short',
             'SMALLINT': 'Short',
             'MEDIUMINT': 'Integer',
             'INT': 'Integer',
@@ -114,14 +115,17 @@ class iObject():
             'TINYBLOB': 'DataTypeWithBLOBs.byte[]',
             'TINYTEXT': 'String',
             'BLOB': 'DataTypeWithBLOBs.byte[]',
-            'TEXT': 'DataTypeWithBLOBs.String',
+            # 'TEXT': 'DataTypeWithBLOBs.String',
+            'TEXT': 'String',
             'MEDIUMBLOB': 'DataTypeWithBLOBs.byte[]',
-            'MEDIUMTEXT': 'DataTypeWithBLOBs.String',
+            # 'MEDIUMTEXT': 'DataTypeWithBLOBs.String',
+            'MEDIUMTEXT': 'String',
             'LONGBLOB': 'DataTypeWithBLOBs.byte[]',
-            'LONGTEXT': 'DataTypeWithBLOBs.String   '
+            # 'LONGTEXT': 'DataTypeWithBLOBs.String   '
+            'LONGTEXT': 'String   '
         }
 
-        return '%s' % (maps[data_type]) if data_type in maps else ''
+        return maps[data_type] if data_type in maps else ''
 
     def get_attr(self, attr_name):
         attr = self.attributes[attr_name] if attr_name in self.attributes else None

@@ -27,7 +27,10 @@
     <form>
         <div class="form-group">
             <label for="">Environment</label>
-            <input type="text" class="form-control" readonly="readonly" value="test" id="environment">
+            <select class="form-control" id="environment">
+                <option value="dev">dev</option>
+                <option value="test">test</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="">Database name</label>
@@ -59,16 +62,19 @@
 <script type="text/javascript">
     $('#database, #table').select2();
 
-    var environment = $('#environment').val();
-    $.get('/ddl2database/', {s: environment}, function(res){
-        if (res.error == 0) {
-            $('#database').html('<option value="">Select...</option>');
-            $(res.data).each(function(i, item){
-                $('#database').append(`<option value="${item}">${item}</option>`);
-            });
-            $('#database').trigger('change');
-        }
-    }, 'json');
+    $('#environment').on('change', function(){
+        var environment = $(this).val();
+        $.get('/ddl2database/', {s: environment}, function(res){
+            if (res.error == 0) {
+                $('#database').html('<option value="">Select...</option>');
+                $(res.data).each(function(i, item){
+                    $('#database').append(`<option value="${item}">${item}</option>`);
+                });
+                $('#database').trigger('change');
+            }
+        }, 'json');
+    });
+    $('#environment').trigger('change');
 
     $('#database').on('change.select2', function(){
         var database = $(this).val();

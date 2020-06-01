@@ -4,19 +4,23 @@ from os import environ
 from dotenv import load_dotenv
 
 dotenv_path = os.path.normpath(__file__+'./../../../.env')
-print(dotenv_path)
 load_dotenv(dotenv_path)
 
-mysql_conn = pymysql.connect(
-    host=environ.get('MYSQL_HOST'),
-    user=environ.get('MYSQL_USER'),
-    password=environ.get('MYSQL_PASS'),
-    database=environ.get('MYSQL_DB'),
-    charset="utf8"
-)
+mysql_conn = None
+mysql_cursor = None
 
-mysql_cursor = mysql_conn.cursor(cursor=pymysql.cursors.DictCursor)
 
+def conn(environment):
+    global mysql_conn, mysql_cursor
+    mysql_conn = pymysql.connect(
+        host=environ.get('MYSQL_HOST_' + environment),
+        user=environ.get('MYSQL_USER_' + environment),
+        password=environ.get('MYSQL_PASS_' + environment),
+        database=environ.get('MYSQL_DB_' + environment),
+        charset="utf8"
+    )
+
+    mysql_cursor = mysql_conn.cursor(cursor=pymysql.cursors.DictCursor)
 
 class table():
     conn = None

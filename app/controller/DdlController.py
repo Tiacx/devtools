@@ -8,9 +8,10 @@ class DdlController(BaseController):
 
     def ddl2database(self):
         s = self.getValue('s')
-        if s is None or s != 'test':
+        if s is None or s not in ('dev', 'test'):
             return ''
 
+        imysql.conn(s)
         databases = imysql.list_databases()
         return self.asJson(databases)
 
@@ -23,6 +24,8 @@ class DdlController(BaseController):
         return self.asJson(tables)
 
     def get_obj(self, database, table_name):
+        environment = database[0:database.find('_')]
+        imysql.conn(environment)
         table_ddl = imysql.table(table_name, database).get_ddl()
         if table_ddl is False:
             return self.error(500)
