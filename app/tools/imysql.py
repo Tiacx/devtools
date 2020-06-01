@@ -12,6 +12,7 @@ mysql_cursor = None
 
 def conn(environment):
     global mysql_conn, mysql_cursor
+    environment = environment.upper()
     mysql_conn = pymysql.connect(
         host=environ.get('MYSQL_HOST_' + environment),
         user=environ.get('MYSQL_USER_' + environment),
@@ -21,6 +22,7 @@ def conn(environment):
     )
 
     mysql_cursor = mysql_conn.cursor(cursor=pymysql.cursors.DictCursor)
+
 
 class table():
     conn = None
