@@ -24,7 +24,9 @@ class DdlController(BaseController):
         return self.asJson(tables)
 
     def get_obj(self, database, table_name):
-        environment = database[0:database.find('_')]
+        environment = self.getValue('e')
+        if environment is None or environment == '':
+            environment = database[0:database.find('_')]
         imysql.conn(environment)
         table_ddl = imysql.table(table_name, database).get_ddl()
         if table_ddl is False:

@@ -92,10 +92,11 @@
     });
 
     $('#table').on('change.select2', function(){
+        var environment = $('#environment').val();
         var database = $('#database').val();
         var table = $(this).val();
         if (table != '') {
-            $.get('{{ app_domain + uri }}/', {s: database + '.' + table, 'ajax': 1}, function(res){
+            $.get('{{ app_domain + uri }}/', {s: database + '.' + table, e: environment, 'ajax': 1}, function(res){
                 if (res.error == 0) {
                     $('#result').val(res.data);
 
