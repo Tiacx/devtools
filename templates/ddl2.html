@@ -10,6 +10,7 @@
     html,body{height: 100%;}
     .panel-code{height: 82% !important;}
     .btn-home{font-size: 30px; line-height: 70px; color: black}
+    .tab-content{padding-top: 10px;}
 </style>
 {% endblock %}
 
@@ -24,27 +25,54 @@
 <hr class="my-4">
 
 <div class="container">
-    <form>
-        <div class="form-group">
-            <label for="">Environment</label>
-            <select class="form-control" id="environment">
-                <option value="dev">dev</option>
-                <option value="test">test</option>
-            </select>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#mysql" role="tab" aria-controls="mysql"
+                aria-selected="true">
+                <h6>Mysql</h6>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="input-tab" data-toggle="tab" href="#input" role="tab" aria-controls="input"
+                aria-selected="false">
+                <h6>Input</h6>
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="mysql" role="tabpanel" aria-labelledby="mysql-tab">
+            <div class="form-group">
+                <label for="">Environment</label>
+                <select class="form-control" id="environment">
+                    <option value="dev">dev</option>
+                    <option value="test">test</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="">Database name</label>
+                <select class="form-control" id="database"></select>
+            </div>
+            <div class="form-group">
+                <label for="">Table name</label>
+                <select class="form-control" id="table"></select>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="">Database name</label>
-            <select class="form-control" id="database"></select>
+        <div class="tab-pane fade" id="input" role="tabpanel" aria-labelledby="input-tab">
+            <div class="form-group">
+                <label for="">Package name</label>
+                <input type="text" class="form-control" id="package">
+            </div>
+            <div class="form-group">
+                <label for="result">Ddl</label>
+                <textarea class="form-control" id="ddl" rows="10" placeholder="please enter ddl ..."></textarea>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="">Table name</label>
-            <select class="form-control" id="table"></select>
-        </div>
-        <div class="form-group">
-            <label for="result">Result&nbsp;&nbsp;<a href="javascript:;" class="btn-copy"><i class="fa fa-copy"></i></a></label>
-            <textarea class="form-control" id="result" rows="10"></textarea>
-        </div>
-    </form>
+    </div>
+
+    <div class="form-group">
+        <label for="result">Result&nbsp;&nbsp;<a href="javascript:;" class="btn-copy"><i class="fa fa-copy"></i></a></label>
+        <textarea class="form-control" id="result" rows="10" readonly="readonly"></textarea>
+    </div>
 
     <ul class="list-group links">
         <li class="list-group-item active">Links</li>
@@ -134,6 +162,30 @@
             window.open(url,"","height="+iHeight+", width="+iWidth+", top="+iTop+", left="+iLeft);
         }
         return false;
+    });
+
+    // Tab 切换
+    $('.nav-link').on('click', function(){
+        if ($(this).attr('href') == '#input') {
+            $('.links').hide();
+        } else {
+            $('.links').show();
+        }
+    });
+
+    // DDL
+    $('#package,#ddl').on('blur', function(){
+        var package = $.trim( $('#package').val() );
+        var ddlString = $.trim( $('#ddl').val() );
+        var table_name = ddlString.match(/table `?(\w+)`?/i)[1];
+        if (ddlString != '') {
+            var s = `.${package}.${table_name}`;
+            $.post('{{ app_domain + uri }}/', {'ddl': ddlString, 's': s, 'ajax': 1}, function(res){
+                if (res.error == 0) {
+                    $('#result').val(res.data);
+                }
+            }, 'json');
+        }
     });
 </script>
 {% endblock %}

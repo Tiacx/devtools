@@ -1,3 +1,4 @@
+import re
 from app.tools import imysql, istring
 from app.tools.iobject import iObject
 from ddlparse.ddlparse import DdlParse
@@ -24,20 +25,24 @@ class DdlController(BaseController):
         return self.asJson(tables)
 
     def get_obj(self, environment, database, table_name):
-        imysql.conn(environment)
-        table_ddl = imysql.table(table_name, database).get_ddl()
-        if table_ddl is False:
+        ddl = self.getValue('ddl')
+        if ddl is None:
+            imysql.conn(environment)
+            ddl = imysql.table(table_name, database).get_ddl()
+
+        if ddl is False:
             return self.error(500)
         else:
             # 处理英文逗号冲突
-            table_ddl = table_ddl.replace(',\n', '-\n').replace(',', '，').replace('-\n', ',\n')
-        table_comment = imysql.table(table_name, database).get_comment()
-        result = DdlParse().parse(table_ddl)
+            ddl = ddl.replace(',\n', '-\n').replace(',', '，').replace('-\n', ',\n')
+        match = re.search(r'comment=\'([\s\S]+)\'', ddl, re.I)
+        table_comment = match.group(1) if match is not None else ''
+        result = DdlParse().parse(ddl)
 
         obj = iObject(table_name[table_name.find('_'):])
         obj.set_comment(table_comment)
 
-        return (obj, result, table_ddl)
+        return (obj, result, ddl)
 
     def ddl2bean(self):
         title = 'Ddl2Bean!!'
@@ -81,8 +86,9 @@ class DdlController(BaseController):
             obj = tmp[0]
             result = tmp[1]
 
+            package = database[database.find('_')+1:]
             obj.set_name_extra('Model')
-            obj.set_space('cn.wbiao.%s.rest.model' % (database[database.find('_')+1:]))
+            obj.set_space('cn.wbiao.%s.rest.model' % (package))
             obj.set_packages([
                 'com.fasterxml.jackson.annotation.JsonFormat',
                 'io.swagger.annotations.ApiModel',
@@ -139,9 +145,9 @@ class DdlController(BaseController):
             obj = tmp[0]
             result = tmp[1]
 
-            database = database[database.find('_')+1:]
+            package = database[database.find('_')+1:]
             obj.set_name_extra('Entity')
-            obj.set_space('cn.wbiao.%s.dao.entities' % (database))
+            obj.set_space('cn.wbiao.%s.dao.entities' % (package))
             obj.set_packages([
                 'cn.wbiao.framework.core.data.AbstractEntity',
                 'cn.wbiao.framework.core.data.ColumnName',
@@ -149,7 +155,7 @@ class DdlController(BaseController):
                 'java.util.Date'
             ])
             obj.set_class_decorators([
-                '@Entity(name = "%s.%s")' % (database, istring.ucwords(table_name[table_name.find('_'):])),
+                '@Entity(name = "%s.%s")' % (package, istring.ucwords(table_name[table_name.find('_'):])),
                 '@Table(name = "%s")' % (table_name),
             ])
             obj.set_extends('AbstractEntity')
@@ -203,9 +209,9 @@ class DdlController(BaseController):
             obj = tmp[0]
             result = tmp[1]
 
-            database = database[database.find('_')+1:]
+            package = database[database.find('_')+1:]
             obj.set_name_extra('Info')
-            obj.set_space('cn.wbiao.%s.api.info' % (database))
+            obj.set_space('cn.wbiao.%s.api.info' % (package))
             obj.set_packages([
                 'com.fasterxml.jackson.annotation.JsonFormat',
                 'io.swagger.annotations.ApiModel',

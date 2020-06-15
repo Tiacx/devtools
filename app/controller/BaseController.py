@@ -22,6 +22,8 @@ class BaseController():
     def getValue(self, key, default=None):
         if key in request.args:
             return request.args[key]
+        elif key in request.form:
+            return request.form[key]
         else:
             return default
 
