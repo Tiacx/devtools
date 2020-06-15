@@ -23,10 +23,7 @@ class DdlController(BaseController):
         tables = imysql.list_tables(database)
         return self.asJson(tables)
 
-    def get_obj(self, database, table_name):
-        environment = self.getValue('e')
-        if environment is None or environment == '':
-            environment = database[0:database.find('_')]
+    def get_obj(self, environment, database, table_name):
         imysql.conn(environment)
         table_ddl = imysql.table(table_name, database).get_ddl()
         if table_ddl is False:
@@ -50,7 +47,7 @@ class DdlController(BaseController):
         if s is not None:
             ajax = int(self.getValue('ajax', 0))
             s = s.split('.')
-            tmp = self.get_obj(s[0], s[1])
+            tmp = self.get_obj(s[0], s[1], s[2])
             obj = tmp[0]
             result = tmp[1]
 
@@ -77,9 +74,10 @@ class DdlController(BaseController):
         if s is not None:
             ajax = int(self.getValue('ajax', 0))
             s = s.split('.')
-            database = s[0]
-            table_name = s[1]
-            tmp = self.get_obj(database, table_name)
+            environment = s[0]
+            database = s[1]
+            table_name = s[2]
+            tmp = self.get_obj(environment, database, table_name)
             obj = tmp[0]
             result = tmp[1]
 
@@ -134,9 +132,10 @@ class DdlController(BaseController):
         if s is not None:
             ajax = int(self.getValue('ajax', 0))
             s = s.split('.')
-            database = s[0]
-            table_name = s[1]
-            tmp = self.get_obj(database, table_name)
+            environment = s[0]
+            database = s[1]
+            table_name = s[2]
+            tmp = self.get_obj(environment, database, table_name)
             obj = tmp[0]
             result = tmp[1]
 
@@ -197,9 +196,10 @@ class DdlController(BaseController):
         if s is not None:
             ajax = int(self.getValue('ajax', 0))
             s = s.split('.')
-            database = s[0]
-            table_name = s[1]
-            tmp = self.get_obj(database, table_name)
+            environment = s[0]
+            database = s[1]
+            table_name = s[2]
+            tmp = self.get_obj(environment, database, table_name)
             obj = tmp[0]
             result = tmp[1]
 

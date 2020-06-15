@@ -96,11 +96,11 @@
         var database = $('#database').val();
         var table = $(this).val();
         if (table != '') {
-            $.get('{{ app_domain + uri }}/', {s: database + '.' + table, e: environment, 'ajax': 1}, function(res){
+            $.get('{{ app_domain + uri }}/', {s: environment + '.' + database + '.' + table, 'ajax': 1}, function(res){
                 if (res.error == 0) {
                     $('#result').val(res.data);
 
-                    var link = `{{ app_domain }}###/?s=${database}.${table}`;
+                    var link = `{{ app_domain }}###/?s=${environment}.${database}.${table}`;
                     $('#ddl2bean').attr('href', link.replace('###', 'ddl2bean')).html(link.replace('###', 'ddl2bean'));
                     $('#ddl2model').attr('href', link.replace('###', 'ddl2model')).html(link.replace('###', 'ddl2model'));
                     $('#ddl2entity').attr('href', link.replace('###', 'ddl2entity')).html(link.replace('###', 'ddl2entity'));
