@@ -2,18 +2,18 @@ from app.tools import istring
 
 
 class iObject():
-    space = ''
-    packages = []
-    comment = ''
-    class_decorators = []
-    name = ''
-    extends = ''
-    attributes = {}
-    comment_compress = False
-    attr_decorators = {}
-    show_methods = True
-
     def __init__(self, name=None):
+        self.space = ''
+        self.packages = []
+        self.comment = ''
+        self.class_decorators = []
+        self.name = ''
+        self.extends = ''
+        self.attributes = {}
+        self.comment_compress = False
+        self.attr_decorators = {}
+        self.show_methods = True
+
         if name is not None:
             self.name = istring.ucwords(name)
 
